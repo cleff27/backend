@@ -5,11 +5,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
-app.use(
-  cors({
-    origin: ["https://localhost:3000", "https://career-app.onrender.com"],
-  })
-);
+app.use(cors());
 app.use(bodyParser.json());
 
 // Connect to MongoDB
