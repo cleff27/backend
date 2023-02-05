@@ -17,6 +17,11 @@ mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", function () {
+  console.log("Connected to MongoDB");
+});
 const courseschema = new mongoose.Schema({
   title: String,
   content: String,
@@ -55,4 +60,6 @@ app.post("/create", (request, response) => {
     .then(() => response.send({ message: "Input saved successfully" }))
     .catch((error) => response.status(400).send(error));
 });
-app.listen(5000, () => console.log("Listening on port 5000"));
+app.listen(process.env.PORT || 5000, () =>
+  console.log("Listening on port 5000")
+);
