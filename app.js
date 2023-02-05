@@ -1,17 +1,22 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://localhost:3000", "https://career-app.onrender.com"],
+  })
+);
 app.use(bodyParser.json());
 
 // Connect to MongoDB
-mongoose.connect(
-  "mongodb+srv://aadarsh:test123@cluster0.4ryob.mongodb.net/careerDB",
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
+mongoose.connect(process.env.MONGO_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 const courseschema = new mongoose.Schema({
   title: String,
   content: String,
