@@ -138,6 +138,61 @@ app.get("/mycourses/:userId", (req, res) => {
       res.status(500).send(err.message);
     });
 });
+app.delete("/cards/:id", function (req, res) {
+  Course.findByIdAndDelete(req.params.id, function (error, card) {
+    if (error) {
+      return res.status(500).send({ error: "Error deleting card" });
+    }
+    if (!card) {
+      return res.status(404).send({ error: "Card not found" });
+    }
+    res.send(card);
+  });
+});
+app.put("/update/:id", function (req, res) {
+  Course.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true },
+    function (error, updatedObject) {
+      if (error) {
+        return res.status(500).send({ error: "Error updating object" });
+      }
+      if (!updatedObject) {
+        return res.status(404).send({ error: "Object not found" });
+      }
+      res.send({ message: "Saved Succesfully" });
+    }
+  );
+});
+app.get("/most-liked", function (req, res) {
+  Course.find()
+    .sort({ liked: -1 })
+    .limit(3)
+    .exec(function (error, objects) {
+      if (error) {
+        return res.status(500).send({ error: "Error getting objects" });
+      }
+      if (!objects) {
+        return res.status(404).send({ error: "Objects not found" });
+      }
+      res.send(objects);
+    });
+});
+app.get("/most-recent", function (req, res) {
+  Course.find()
+    .sort({ date: -1 })
+    .limit(3)
+    .exec(function (error, objects) {
+      if (error) {
+        return res.status(500).send({ error: "Error getting objects" });
+      }
+      if (!objects) {
+        return res.status(404).send({ error: "Objects not found" });
+      }
+      res.send(objects);
+    });
+});
 
 app.post("/register", (req, res) => {
   const { name, email, password } = req.body;
