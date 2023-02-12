@@ -165,7 +165,7 @@ app.put("/update/:id", function (req, res) {
     }
   );
 });
-app.get("/most-liked", function (req, res) {
+app.get("/mostliked", function (req, res) {
   Course.find()
     .sort({ liked: -1 })
     .limit(3)
@@ -179,7 +179,7 @@ app.get("/most-liked", function (req, res) {
       res.send(objects);
     });
 });
-app.get("/most-recent", function (req, res) {
+app.get("/mostrecent", function (req, res) {
   Course.find()
     .sort({ date: -1 })
     .limit(3)
