@@ -165,6 +165,63 @@ app.put("/update/:id", function (req, res) {
     }
   );
 });
+
+app.post("/like-course", (req, res) => {
+  const { userId, courseId } = req.body;
+
+  User.findById(userId, (err, user) => {
+    if (err) return res.status(500).send(err);
+    if (!user) return res.status(404).send({ message: "User not found" });
+
+    user.liked.push(courseId);
+    user.save((err) => {
+      if (err) return res.status(500).send(err);
+
+      Course.findById(courseId, (err, course) => {
+        if (err) return res.status(500).send(err);
+        if (!course)
+          return res.status(404).send({ message: "Course not found" });
+
+        course.liked += 1;
+        course.save((err) => {
+          if (err) return res.status(500).send(err);
+          return res.send({ message: "Course liked" });
+        });
+      });
+    });
+  });
+});
+
+app.post("/unlike-course", (req, res) => {
+  const { userId, courseId } = req.body;
+
+  User.findById(userId, (err, user) => {
+    if (err) return res.status(500).send(err);
+    if (!user) return res.status(404).send({ message: "User not found" });
+
+    const index = user.liked.indexOf(courseId);
+    if (index === -1)
+      return res.status(404).send({ message: "Course not found" });
+
+    user.liked.splice(index, 1);
+    user.save((err) => {
+      if (err) return res.status(500).send(err);
+
+      Course.findById(courseId, (err, course) => {
+        if (err) return res.status(500).send(err);
+        if (!course)
+          return res.status(404).send({ message: "Course not found" });
+
+        course.liked -= 1;
+        course.save((err) => {
+          if (err) return res.status(500).send(err);
+          return res.send({ message: "Course unliked" });
+        });
+      });
+    });
+  });
+});
+
 app.get("/mostliked", function (req, res) {
   Course.find()
     .sort({ liked: -1 })
@@ -221,6 +278,7 @@ app.post("/login", (req, res) => {
     });
   });
 });
+
 app.post("/logout", (req, res) => {
   res.clearCookie("user");
   req.session.destroy(() => {
